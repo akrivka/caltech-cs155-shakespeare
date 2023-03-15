@@ -372,7 +372,7 @@ class HiddenMarkovModel:
             )
             states.append(new_state)
 
-            if len(states) == 1:
+            if len(states) == 1 and len(end_words) > 0:
                 seq = rng.choice(end_words)
             else:
                 seq = rng.choice(range(self.D), p=self.O[new_state])
