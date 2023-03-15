@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import time
-from dictionaries import id_to_word
+from dictionaries import id_to_word, syllable_dictionary
 import datetime
 
 # helpers
@@ -378,6 +378,16 @@ class HiddenMarkovModel:
                 seq = rng.choice(range(self.D), p=self.O[new_state])
             word = id_to_word[seq]
             syllable_c = get_syllable_count(word)
+            discard = False
+            for count in syllable_dictionary[word.replace("$", "").replace("/", "")]:
+                if "E" in count:
+                    c = int(count.replace("E", ""))
+                    if c == syllable_c:
+                        discard = True
+                        break
+            if discard:
+                states.pop()
+                continue
 
             while syllable_c + syllables > 10:
                 seq = rng.choice(range(self.D), p=self.O[new_state])
