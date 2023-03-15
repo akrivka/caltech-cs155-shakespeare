@@ -53,15 +53,20 @@ remove_special = len(sys.argv) <= 2
 
 hmm = load_HMM(filename)
 
+
+def generate_line(end_words=[]):
+    while True:
+        emission, _ = hmm.generate_emission(10, end_words=invert_words(end_words))
+        if id_to_word[emission[0]][0] == "$":
+            break
+    return emission
+
+
 line_pairs = []
 for _ in range(7):
-    emission1, _ = hmm.generate_emission(
-        10, end_words=invert_words(rhyming_dictionary.keys())
-    )
+    emission1 = generate_line(rhyming_dictionary.keys())
     last_word = id_to_word[emission1[-1]].replace("$", "").replace("/", "")
-    emission2, _ = hmm.generate_emission(
-        10, end_words=invert_words(rhyming_dictionary[last_word])
-    )
+    emission2 = generate_line(rhyming_dictionary[last_word])
 
     line_pairs.append((emission1, emission2))
 
